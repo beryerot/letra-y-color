@@ -7,7 +7,7 @@ const LETTERS = [
   "M","M","P","P","B","B","G","G","V","V","H","H","F","J","Z","Ñ","X","Q","K",
 ];
 const COLORS = ["blue", "red"];
-const CATEGORIES = ["Geografía", "Nombres", "Comidas"];
+const CATEGORIES = ["Geografía", "Nombres", "Comidas", "Películas", "Libros"];
 const CATEGORY_ICONS = { "Geografía": "🌍", "Nombres": "👤", "Comidas": "🍽️" };
 const TOTAL_ROUNDS = 8;
 const STARTING_POINTS = 8;
