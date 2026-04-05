@@ -4,7 +4,7 @@ const LETTERS = [
   "E","E","E","E","E","E","A","A","A","A","A","O","O","O","O","O",
   "S","S","S","S","N","N","N","N","R","R","R","R","I","I","I",
   "L","L","L","D","D","D","T","T","T","C","C","C","U","U","U",
-  "M","M","P","P","B","B","G","G","V","V","H","H","F","J","Z","Ñ","X","Q","K",
+  "M","M","P","P","B","B","G","G","V","V","H","H","F","J","Z","Ñ","X","Q",
 ];
 const COLORS = ["blue", "red"];
 const CATEGORIES = ["Geografía", "Nombres", "Comidas", "Películas", "Libros"];
