@@ -1,23 +1,68 @@
 import { useState, useEffect } from "react";
 
+// ─── Data ─────────────────────────────────────────────────────────────────────
+
 const LETTERS = [
-  "E","E","E","E","E","E","A","A","A","A","A","O","O","O","O","O",
-  "S","S","S","S","N","N","N","N","R","R","R","R","I","I","I",
-  "L","L","L","D","D","D","T","T","T","C","C","C","U","U","U",
-  "M","M","P","P","B","B","G","G","V","V","H","H","F","J","Z","Ñ","X","Q",
+  // E 13.7% → 14
+  "E","E","E","E","E","E","E","E","E","E","E","E","E","E",
+  // A 12.5% → 13
+  "A","A","A","A","A","A","A","A","A","A","A","A","A",
+  // O 8.7% → 9
+  "O","O","O","O","O","O","O","O","O",
+  // R 6.9% → 7
+  "R","R","R","R","R","R","R",
+  // S 7.9% → 8
+  "S","S","S","S","S","S","S","S",
+  // N 6.7% → 7
+  "N","N","N","N","N","N","N",
+  // I 6.2% → 6
+  "I","I","I","I","I","I",
+  // L 4.9% → 5
+  "L","L","L","L","L",
+  // D 4.6% → 5
+  "D","D","D","D","D",
+  // T 4.6% → 5
+  "T","T","T","T","T",
+  // C 4.0% → 4
+  "C","C","C","C",
+  // U 3.9% → 4
+  "U","U","U","U",
+  // M 3.1% → 3
+  "M","M","M",
+  // P 2.5% → 3
+  "P","P","P",
+  // B 1.4% → 2
+  "B","B",
+  // H 1.2% → 1
+  "H",
+  // V 0.9% → 1
+  "V",
+  // G 1.0% → 1
+  "G",
+  // Z 0.5% → 1
+  "Z",
+  // F 0.7% → 1
+  "F",
+  // J 0.4% → 1
+  "J",
+  // Ñ 0.3% → 1
+  "Ñ",
+  // X 0.2% → 1
+  "X",
 ];
 const COLORS = ["blue", "red"];
-const CATEGORIES = ["Geografía", "Nombres", "Comidas", "Películas", "Libros"];
+const CATEGORIES = ["Geografía", "Nombres", "Comidas"];
 const CATEGORY_ICONS = { "Geografía": "🌍", "Nombres": "👤", "Comidas": "🍽️" };
 const TOTAL_ROUNDS = 8;
 const STARTING_POINTS = 8;
-const PLAYER_COLORS = [
-  { bg: "#c8960c", border: "#f0c040", text: "#1a0e00" },
-  { bg: "#1a7a3c", border: "#4ade80", text: "#f0fff4" },
-  { bg: "#9b2626", border: "#f87171", text: "#fff0f0" },
-  { bg: "#1e3a8a", border: "#60a5fa", text: "#eff6ff" },
-  { bg: "#6b21a8", border: "#c084fc", text: "#faf5ff" },
-  { bg: "#0f766e", border: "#2dd4bf", text: "#f0fdfa" },
+
+const PC = [
+  { bg: "#f59e0b", text: "#000" },
+  { bg: "#10b981", text: "#000" },
+  { bg: "#ef4444", text: "#fff" },
+  { bg: "#3b82f6", text: "#fff" },
+  { bg: "#8b5cf6", text: "#fff" },
+  { bg: "#ec4899", text: "#fff" },
 ];
 
 function generateHand(count) {
@@ -42,40 +87,55 @@ function generateHand(count) {
   return cards;
 }
 
-const GLOBAL_CSS = `
-  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+// ─── CSS ──────────────────────────────────────────────────────────────────────
+
+const CSS = `
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500;700&display=swap');
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  @keyframes cardDeal {
-    0%   { opacity:0; transform:translateY(-45px) scale(0.84); }
-    65%  { opacity:1; transform:translateY(3px) scale(1.02); }
-    100% { opacity:1; transform:translateY(0) scale(1); }
+  body { background: #f2f2ef; }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.38} }
-  @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
-  @keyframes shrink { 0%{transform:scale(1)} 40%{transform:scale(0.87)} 100%{transform:scale(1)} }
-  input:focus { outline:none; border-color:#c8960c !important; box-shadow:0 0 0 3px rgba(200,150,12,0.2); }
-  button { font-family:'Cinzel',serif; cursor:pointer; transition: opacity .15s, transform .1s; }
-  button:not(:disabled):hover { opacity:.88; }
-  button:not(:disabled):active { transform:scale(0.96) !important; }
-  button:disabled { cursor:default; }
+  @keyframes cardIn {
+    0%   { opacity: 0; transform: translateY(-32px) scale(0.9); }
+    70%  { opacity: 1; transform: translateY(2px) scale(1.02); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  @keyframes pop {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(0.88); }
+    100% { transform: scale(1); }
+  }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+  input { font-family: 'DM Sans', sans-serif; }
+  input:focus { outline: none; }
+  button { font-family: 'DM Sans', sans-serif; cursor: pointer; border: none; }
+  button:disabled { cursor: default; }
+  button:not(:disabled):active { transform: scale(0.96); }
 `;
 
+// ─── App ──────────────────────────────────────────────────────────────────────
+
 export default function App() {
-  const [screen, setScreen]               = useState("menu");
-  const [playerCount, setPlayerCount]     = useState(2);
-  const [playerNames, setPlayerNames]     = useState(["Jugador 1", "Jugador 2"]);
+  const [screen, setScreen]                 = useState("menu");
+  const [playerCount, setPlayerCount]       = useState(2);
+  const [playerNames, setPlayerNames]       = useState(["Jugador 1", "Jugador 2"]);
   const [cardsPerPlayer, setCardsPerPlayer] = useState(1);
-  const [scores, setScores]               = useState([]);
-  const [cards, setCards]                 = useState([]);
-  const [round, setRound]                 = useState(1);
-  const [animating, setAnimating]         = useState(false);
-  const [loserIdx, setLoserIdx]           = useState(null);
-  const [dealt, setDealt]                 = useState(false);
-  const [penalized, setPenalized]         = useState(false);
+  const [scores, setScores]                 = useState([]);
+  const [cards, setCards]                   = useState([]);
+  const [round, setRound]                   = useState(1);
+  const [animating, setAnimating]           = useState(false);
+  const [loserIdx, setLoserIdx]             = useState(null);
+  const [dealt, setDealt]                   = useState(false);
+  const [penalized, setPenalized]           = useState(false);
 
   useEffect(() => {
     const el = document.createElement("style");
-    el.textContent = GLOBAL_CSS;
+    el.textContent = CSS;
     document.head.appendChild(el);
     return () => { try { document.head.removeChild(el); } catch(e) {} };
   }, []);
@@ -95,9 +155,8 @@ export default function App() {
   const dealCards = () => {
     setAnimating(true); setDealt(false);
     setPenalized(false); setLoserIdx(null);
-    const totalCards = playerCount * cardsPerPlayer;
-    const newCards = generateHand(totalCards);
-    setTimeout(() => { setCards(newCards); setDealt(true); setAnimating(false); }, 420);
+    const newCards = generateHand(playerCount * cardsPerPlayer);
+    setTimeout(() => { setCards(newCards); setDealt(true); setAnimating(false); }, 380);
   };
 
   const penalizePlayer = (idx) => {
@@ -111,17 +170,13 @@ export default function App() {
       setLoserIdx(null);
       if (nextRound > TOTAL_ROUNDS) { setScreen("results"); }
       else { setRound(nextRound); setCards([]); setDealt(false); }
-    }, 950);
+    }, 900);
   };
 
   const maxScore = Math.max(...(scores.length ? scores : [0]));
 
   return (
-    <div style={{ minHeight:"100vh", position:"relative", overflow:"hidden", fontFamily:"'Crimson Text',Georgia,serif" }}>
-      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse at 50% 38%, #2a5c3a 0%, #183d26 55%, #0d2218 100%)", zIndex:0 }} />
-      <div style={{ position:"fixed", inset:0, opacity:.55, zIndex:0,
-        backgroundImage:`url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.1'/%3E%3C/svg%3E")`,
-      }} />
+    <div style={{ minHeight: "100vh", background: "#f2f2ef", fontFamily: "'DM Sans', sans-serif", color: "#111" }}>
       {screen === "menu"    && <MenuScreen playerCount={playerCount} playerNames={playerNames} cardsPerPlayer={cardsPerPlayer} onCardsPerPlayer={setCardsPerPlayer} onPlayerCount={handlePlayerCount} onNameChange={(i,v)=>{ const n=[...playerNames]; n[i]=v; setPlayerNames(n); }} onStart={startGame} />}
       {screen === "game"    && <GameScreen playerNames={playerNames} scores={scores} cards={cards} round={round} animating={animating} dealt={dealt} loserIdx={loserIdx} maxScore={maxScore} penalized={penalized} onDeal={dealCards} onRedeal={dealCards} onPenalize={penalizePlayer} onMenu={()=>setScreen("menu")} />}
       {screen === "results" && <ResultsScreen playerNames={playerNames} scores={scores} onPlayAgain={startGame} onMenu={()=>setScreen("menu")} />}
@@ -129,147 +184,167 @@ export default function App() {
   );
 }
 
+// ─── Menu ─────────────────────────────────────────────────────────────────────
+
 function MenuScreen({ playerCount, playerNames, cardsPerPlayer, onCardsPerPlayer, onPlayerCount, onNameChange, onStart }) {
   return (
-    <div style={{ position:"relative", zIndex:1, minHeight:"100vh", display:"flex", alignItems:"center", justifyContent:"center", padding:"20px" }}>
-      <div style={pnl}>
-        <div style={pnlHdr}>
-          <div style={ornS}>✦ ✦ ✦</div>
-          <h1 style={{ fontFamily:"'Cinzel',serif", fontWeight:900, fontSize:32, color:"#fff", letterSpacing:2, textShadow:"0 2px 10px #0007", margin:"6px 0" }}>
-            Letra <span style={{ color:"#fde68a" }}>&amp;</span> Color
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
+      <div style={{ width: "100%", maxWidth: 420, animation: "slideUp .4s ease both" }}>
+
+        {/* Title */}
+        <div style={{ marginBottom: 36 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+            <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#3b82f6" }} />
+            <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#ef4444" }} />
+          </div>
+          <h1 style={{ fontSize: 36, fontWeight: 700, letterSpacing: -1, lineHeight: 1 }}>
+            Letra <span style={{ color: "#3b82f6" }}>&</span> Color
           </h1>
-          <p style={{ fontFamily:"'Crimson Text',serif", fontStyle:"italic", fontSize:15, color:"#fde68a", opacity:.85 }}>El juego de palabras</p>
-          <div style={{ ...ornS, marginTop:6 }}>✦ ✦ ✦</div>
+          <p style={{ color: "#999", fontSize: 14, marginTop: 6 }}>El juego de palabras inspirado en Momo</p>
         </div>
-        <div style={{ padding:"22px 24px 26px" }}>
-          <div style={{ marginBottom:20 }}>
-            <label style={lbl}>Número de jugadores</label>
-            <div style={{ display:"flex", gap:8 }}>
-              {[2,3,4,5,6].map(n => (
-                <button key={n} onClick={() => onPlayerCount(n)} style={{ width:44, height:44, borderRadius:10, border:`2px solid ${playerCount===n?"#f0c040":"#78500a"}`, background:playerCount===n?"#78500a":"#2a1f0e", color:playerCount===n?"#fde68a":"#c8960c", fontSize:18, fontWeight:700 }}>
-                  {n}
-                </button>
-              ))}
-            </div>
+
+        {/* Players */}
+        <Section label="Jugadores">
+          <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
+            {[2,3,4,5,6].map(n => (
+              <Chip key={n} active={playerCount===n} onClick={() => onPlayerCount(n)}>{n}</Chip>
+            ))}
           </div>
-          <div style={{ marginBottom:20 }}>
-            <label style={lbl}>Cartas por jugador</label>
-            <div style={{ display:"flex", gap:8 }}>
-              {[1,2,3,4].map(n => (
-                <button key={n} onClick={() => onCardsPerPlayer(n)} style={{ width:44, height:44, borderRadius:10, border:`2px solid ${cardsPerPlayer===n?"#f0c040":"#78500a"}`, background:cardsPerPlayer===n?"#78500a":"#2a1f0e", color:cardsPerPlayer===n?"#fde68a":"#c8960c", fontSize:18, fontWeight:700 }}>
-                  {n}
-                </button>
-              ))}
-            </div>
-            <p style={{ fontFamily:"'Crimson Text',serif", fontSize:13, color:"#78500a", marginTop:6 }}>
-              {playerCount * cardsPerPlayer} cartas por mano en total
-            </p>
-          </div>
-          <div style={{ marginBottom:20 }}>
-            <label style={lbl}>Jugadores</label>
-            <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
-              {playerNames.map((name, i) => (
-                <div key={i} style={{ display:"flex", alignItems:"center", gap:10 }}>
-                  <div style={{ width:28, height:28, borderRadius:"50%", background:PLAYER_COLORS[i].bg, border:`2px solid ${PLAYER_COLORS[i].border}`, display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"'Cinzel',serif", fontWeight:700, fontSize:12, color:PLAYER_COLORS[i].text, flexShrink:0 }}>{i+1}</div>
-                  <input value={name} onChange={e=>onNameChange(i,e.target.value)} maxLength={16}
-                    style={{ flex:1, background:"rgba(255,255,255,0.06)", border:"1px solid #78500a", borderRadius:8, color:"#e8d8b0", padding:"8px 12px", fontSize:15, fontFamily:"'Crimson Text',serif" }} />
-                </div>
-              ))}
-            </div>
-          </div>
-          <div style={{ background:"rgba(0,0,0,0.3)", border:"1px solid #78500a", borderRadius:12, padding:"14px 16px", marginBottom:22 }}>
-            <p style={lbl}>Reglas</p>
-            {[
-              { bg:"#1a2a5e", bdr:"#3b82f6", col:"#93c5fd", tag:"AZUL",   desc:"Di una palabra que contenga esa letra" },
-              { bg:"#5e1a1a", bdr:"#ef4444", col:"#fca5a5", tag:"ROJO",   desc:"Di una palabra que no contenga esa letra" },
-              { bg:"#5e4a00", bdr:"#f59e0b", col:"#fde68a", tag:"DORADA", desc:"Di algo que pertenezca a la categoría" },
-              { bg:"linear-gradient(135deg,#162d6b 50%,#6b1212 50%)", bdr:"#c084fc", col:"#e9d5ff", tag:"⇅", desc:"Rojo pasa a azul y azul a rojo" },
-            ].map(r => (
-              <div key={r.tag} style={{ display:"flex", alignItems:"center", gap:12, marginBottom:8 }}>
-                <div style={{ minWidth:58, padding:"5px 6px", borderRadius:8, background:r.bg, border:`2px solid ${r.bdr}`, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
-                  <span style={{ color:r.col, fontWeight:700, fontFamily:"'Cinzel',serif", fontSize:11 }}>{r.tag}</span>
-                </div>
-                <span style={{ fontFamily:"'Crimson Text',serif", fontSize:15, color:"#c8b890", lineHeight:1.3 }}>{r.desc}</span>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {playerNames.map((name, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{ width: 10, height: 10, borderRadius: "50%", background: PC[i].bg, flexShrink: 0 }} />
+                <input value={name} onChange={e => onNameChange(i, e.target.value)} maxLength={16}
+                  style={{ flex: 1, background: "#fff", border: "1.5px solid #ddd", borderRadius: 10, color: "#111", padding: "9px 14px", fontSize: 14 }} />
               </div>
             ))}
           </div>
-          <button onClick={onStart} style={{ width:"100%", padding:"14px", background:"linear-gradient(135deg,#78500a,#c8960c,#78500a)", border:"2px solid #f0c040", borderRadius:12, color:"#1a0e00", fontSize:16, fontWeight:700, letterSpacing:1, boxShadow:"0 4px 20px #c8960c44" }}>
-            ✦ Comenzar partida ✦
-          </button>
-        </div>
+        </Section>
+
+        {/* Cards per player */}
+        <Section label="Cartas por jugador">
+          <div style={{ display: "flex", gap: 8, marginBottom: 6 }}>
+            {[1,2,3,4].map(n => (
+              <Chip key={n} active={cardsPerPlayer===n} onClick={() => onCardsPerPlayer(n)}>{n}</Chip>
+            ))}
+          </div>
+          <p style={{ fontSize: 12, color: "#aaa" }}>{playerCount * cardsPerPlayer} cartas por mano</p>
+        </Section>
+
+        {/* Rules */}
+        <Section label="Reglas">
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {[
+              { color: "#3b82f6", label: "Azul",     desc: "Di una palabra que contenga la letra" },
+              { color: "#ef4444", label: "Rojo",     desc: "Di una palabra que no la contenga" },
+              { color: "#f59e0b", label: "Dorada",   desc: "Di algo de esa categoría" },
+              { color: null,      label: "Inversión",desc: "Rojo pasa a azul y azul a rojo", swap: true },
+            ].map(r => (
+              <div key={r.label} style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{ width: 52, height: 28, borderRadius: 6, flexShrink: 0, overflow: "hidden",
+                  background: r.swap ? "linear-gradient(90deg, #3b82f6 50%, #ef4444 50%)" : r.color,
+                  display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  {!r.swap && <span style={{ fontSize: 10, fontWeight: 700, color: r.color === "#f59e0b" ? "#000" : "#fff" }}>{r.label.toUpperCase()}</span>}
+                  {r.swap && <span style={{ fontSize: 13 }}>⇅</span>}
+                </div>
+                <span style={{ fontSize: 13, color: "#999", lineHeight: 1.4 }}>{r.desc}</span>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <button onClick={onStart} style={{ width: "100%", padding: "14px", background: "#111", borderRadius: 12, color: "#fff", fontSize: 15, fontWeight: 600, letterSpacing: -.2, transition: "background .15s" }}>
+          Comenzar partida →
+        </button>
       </div>
     </div>
   );
 }
 
+// ─── Game ─────────────────────────────────────────────────────────────────────
+
 function GameScreen({ playerNames, scores, cards, round, animating, dealt, loserIdx, maxScore, penalized, onDeal, onRedeal, onPenalize, onMenu }) {
   return (
-    <div style={{ position:"relative", zIndex:1, minHeight:"100vh", display:"flex", flexDirection:"column", padding:"14px", gap:12 }}>
-      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-        <button onClick={onMenu} style={{ background:"none", border:"1px solid #78500a55", borderRadius:8, color:"#c8960c99", padding:"7px 14px", fontSize:13 }}>← Salir</button>
-        <div style={{ background:"rgba(0,0,0,0.5)", border:"1px solid #c8960c55", borderRadius:20, padding:"5px 20px", display:"flex", alignItems:"center", gap:6 }}>
-          <span style={{ fontFamily:"'Cinzel',serif", fontSize:10, letterSpacing:2, color:"#c8960c", textTransform:"uppercase" }}>MANO</span>
-          <span style={{ fontFamily:"'Cinzel',serif", fontSize:20, fontWeight:700, color:"#fde68a" }}>{round}</span>
-          <span style={{ fontFamily:"'Cinzel',serif", fontSize:10, letterSpacing:2, color:"#c8960c" }}>/ {TOTAL_ROUNDS}</span>
-        </div>
-        <div style={{ width:72 }} />
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", padding: "16px", gap: 14 }}>
+
+      {/* Top bar */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <button onClick={onMenu} style={{ background: "none", color: "#aaa", fontSize: 13, padding: "6px 0" }}>← Salir</button>
+        <span style={{ fontSize: 12, color: "#bbb", fontWeight: 600, letterSpacing: 1, textTransform: "uppercase" }}>
+          Mano {round} / {TOTAL_ROUNDS}
+        </span>
+        <div style={{ width: 48 }} />
       </div>
 
-      <div style={{ display:"flex", gap:8, flexWrap:"wrap", justifyContent:"center" }}>
+      {/* Progress bar */}
+      <div style={{ height: 2, background: "#ddd", borderRadius: 2 }}>
+        <div style={{ height: "100%", width: `${(round - 1) / TOTAL_ROUNDS * 100}%`, background: "#111", borderRadius: 2, transition: "width .5s ease" }} />
+      </div>
+
+      {/* Scores */}
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
         {playerNames.map((name, i) => {
           const isLoser  = loserIdx === i;
           const isLeader = scores[i] === maxScore;
           return (
             <div key={i} style={{
-              borderRadius:12, padding:"8px 14px", minWidth:68,
-              display:"flex", flexDirection:"column", alignItems:"center", position:"relative",
-              background: PLAYER_COLORS[i].bg,
-              border: `2px solid ${isLoser?"#ef4444":isLeader?"#fde68a":PLAYER_COLORS[i].border}`,
-              color: PLAYER_COLORS[i].text,
-              transform: isLoser?"scale(0.91)":isLeader?"scale(1.06)":"scale(1)",
-              boxShadow: isLoser?"0 0 16px #ef444455":isLeader?`0 0 18px ${PLAYER_COLORS[i].border}88`:"0 4px 12px #0006",
-              animation: isLoser?"shrink .4s ease":"none",
-              transition:"all .3s cubic-bezier(.34,1.56,.64,1)",
+              borderRadius: 10, padding: "8px 14px", flex: 1, minWidth: 70,
+              background: isLoser ? "#fff0f0" : "#fff",
+              border: `1.5px solid ${isLoser ? "#ef4444" : isLeader ? PC[i].bg : "#e5e5e5"}`,
+              animation: isLoser ? "pop .4s ease" : "none",
+              transition: "all .3s",
             }}>
-              {isLeader && !isLoser && <span style={{ position:"absolute", top:-11, fontSize:15 }}>♛</span>}
-              <span style={{ fontFamily:"'Cinzel',serif", fontSize:10, letterSpacing:1, textTransform:"uppercase", opacity:.9, marginTop:2 }}>{name}</span>
-              <div style={{ width:"70%", height:1, background:"currentColor", opacity:.25, margin:"4px 0" }} />
-              <span style={{ fontFamily:"'Cinzel',serif", fontSize:26, fontWeight:900, lineHeight:1 }}>{scores[i]}</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                <div style={{ width: 7, height: 7, borderRadius: "50%", background: PC[i].bg }} />
+                <span style={{ fontSize: 11, color: "#999", fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{name}</span>
+                {isLeader && !isLoser && <span style={{ marginLeft: "auto", fontSize: 10 }}>♛</span>}
+              </div>
+              <span style={{ fontSize: 24, fontWeight: 700, color: isLoser ? "#ef4444" : "#111" }}>{scores[i]}</span>
             </div>
           );
         })}
       </div>
 
-      <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center" }}>
-        <div style={{ width:"100%", maxWidth:560, minHeight:190, background:"radial-gradient(ellipse at center,#2e6342 0%,#1a3d28 65%,#0f2518 100%)", border:"3px solid #78500a", borderRadius:24, boxShadow:"0 8px 40px #0009, inset 0 2px 0 #4a7a5a55, inset 0 -2px 0 #0a1f12", display:"flex", alignItems:"center", justifyContent:"center", padding:"24px 16px" }}>
-          {!dealt && !animating && (
-            <button onClick={onDeal} style={{ background:"rgba(0,0,0,0.45)", border:"2px dashed #c8960c77", borderRadius:16, color:"#c8960c", padding:"18px 36px", fontSize:15, fontWeight:700, letterSpacing:1, textAlign:"center", lineHeight:1.5 }}>
-              <span style={{ fontSize:28, display:"block" }}>🃏</span>Repartir cartas
-            </button>
-          )}
-          {animating && <p style={{ fontFamily:"'Cinzel',serif", fontSize:15, letterSpacing:4, color:"#c8960c", animation:"pulse 1s infinite" }}>Repartiendo…</p>}
-          {dealt && (
-            <div style={{ display:"flex", flexWrap:"wrap", gap:12, justifyContent:"center", alignItems:"flex-end" }}>
-              {cards.map((card, i) => <CardDisplay key={card.id} card={card} index={i} total={cards.length} />)}
-            </div>
-          )}
-        </div>
+      {/* Cards zone */}
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", background: "#e8e8e4", borderRadius: 16, border: "1.5px solid #ddd", minHeight: 180 }}>
+        {!dealt && !animating && (
+          <button onClick={onDeal} style={{ background: "#f2f2ef", border: "1.5px dashed #ccc", borderRadius: 12, color: "#bbb", padding: "20px 40px", fontSize: 14, display: "flex", flexDirection: "column", alignItems: "center", gap: 8, transition: "border-color .15s, color .15s" }}>
+            <span style={{ fontSize: 32 }}>🃏</span>
+            <span>Repartir cartas</span>
+          </button>
+        )}
+        {animating && (
+          <span style={{ fontSize: 13, color: "#bbb", letterSpacing: 2, textTransform: "uppercase", animation: "pulse 1s infinite" }}>Repartiendo…</span>
+        )}
+        {dealt && (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "center", padding: "20px 16px" }}>
+            {cards.map((card, i) => <CardDisplay key={card.id} card={card} index={i} />)}
+          </div>
+        )}
       </div>
 
+      {/* Penalty */}
       {dealt && (
-        <div style={{ paddingBottom:8 }}>
-          <p style={{ textAlign:"center", fontFamily:"'Cinzel',serif", fontSize:11, letterSpacing:2, textTransform:"uppercase", color:"#c8960c", marginBottom:10 }}>¿Quién pierde el punto?</p>
-          <div style={{ display:"flex", flexWrap:"wrap", gap:8, justifyContent:"center", marginBottom:12 }}>
+        <div>
+          <p style={{ fontSize: 11, color: "#bbb", letterSpacing: 1.5, textTransform: "uppercase", fontWeight: 600, marginBottom: 10, textAlign: "center" }}>¿Quién pierde el punto?</p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", marginBottom: 10 }}>
             {playerNames.map((name, i) => (
               <button key={i} onClick={() => onPenalize(i)} disabled={penalized}
-                style={{ borderRadius:10, padding:"10px 18px", fontSize:14, fontWeight:700, letterSpacing:.5, background:PLAYER_COLORS[i].bg, border:`2px solid ${loserIdx===i?"#fff":PLAYER_COLORS[i].border}`, color:PLAYER_COLORS[i].text, opacity:penalized&&loserIdx!==i?0.32:1, transform:loserIdx===i?"scale(1.1)":"scale(1)", transition:"all .2s", boxShadow:"0 4px 12px #0005" }}>
-                {loserIdx===i?"✗ ":""}{name}
+                style={{
+                  padding: "10px 18px", borderRadius: 10, fontSize: 13, fontWeight: 600,
+                  background: loserIdx === i ? PC[i].bg : "#fff",
+                  color: loserIdx === i ? PC[i].text : "#999",
+                  border: `1.5px solid ${loserIdx === i ? PC[i].bg : "#e5e5e5"}`,
+                  opacity: penalized && loserIdx !== i ? 0.3 : 1,
+                  transition: "all .2s",
+                }}>
+                {loserIdx === i ? "✗ " : ""}{name}
               </button>
             ))}
           </div>
           {!penalized && (
-            <div style={{ display:"flex", justifyContent:"center" }}>
-              <button onClick={onRedeal} style={{ background:"none", border:"1px dashed #78500a88", borderRadius:10, color:"#78500a", padding:"8px 22px", fontSize:12, letterSpacing:1 }}>
+            <div style={{ textAlign: "center" }}>
+              <button onClick={onRedeal} style={{ background: "none", color: "#ccc", fontSize: 12, padding: "6px 16px", borderRadius: 8, border: "1px dashed #ddd" }}>
                 ↺ Volver a tirar
               </button>
             </div>
@@ -280,53 +355,65 @@ function GameScreen({ playerNames, scores, cards, round, animating, dealt, loser
   );
 }
 
-function CardDisplay({ card, index, total }) {
+// ─── Card ─────────────────────────────────────────────────────────────────────
+
+function CardDisplay({ card, index }) {
   const isCategory = card.type === "category";
   const isSwap     = card.type === "swap";
   const isBlue     = card.color === "blue";
-  const cardBg     = isCategory ? "linear-gradient(155deg,#5e3a00,#c8960c,#5e3a00)"
-                   : isSwap     ? "linear-gradient(135deg, #2563eb 0%, #2563eb 50%, #dc2626 50%, #dc2626 100%)"
-                   : isBlue     ? "linear-gradient(155deg,#162d6b,#2563eb,#162d6b)"
-                                : "linear-gradient(155deg,#6b1212,#dc2626,#6b1212)";
-  const borderCol  = isCategory ? "#f0c040" : isSwap ? "#c084fc" : isBlue ? "#93c5fd" : "#fca5a5";
-  const glowCol    = isCategory ? "#f59e0b" : isSwap ? "#a855f7" : isBlue ? "#3b82f6" : "#ef4444";
+
+  const bg = isCategory ? "#f59e0b"
+           : isSwap     ? null
+           : isBlue     ? "#3b82f6"
+                        : "#ef4444";
+
+  const textColor = isCategory ? "#000" : "#fff";
 
   return (
-    <div style={{ animation:`cardDeal .4s cubic-bezier(.34,1.56,.64,1) ${index*85}ms both` }}>
-      <div style={{ width:108, height:158, borderRadius:14, background:cardBg, border:`2.5px solid ${borderCol}`, boxShadow:`0 8px 24px #0009, 0 0 16px ${glowCol}44, inset 0 1px 0 ${borderCol}44`, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", position:"relative", overflow:"hidden" }}>
-        <div style={{ position:"absolute", inset:5, borderRadius:10, border:`1px solid ${borderCol}33`, pointerEvents:"none", zIndex:2 }} />
-        {!isCategory && !isSwap && <>
-          <span style={{ position:"absolute", top:7, left:9, fontSize:12, fontFamily:"'Cinzel',serif", color:`${borderCol}bb`, fontWeight:700, zIndex:2 }}>{card.letter}</span>
-          <span style={{ position:"absolute", bottom:7, right:9, fontSize:12, fontFamily:"'Cinzel',serif", color:`${borderCol}bb`, fontWeight:700, transform:"rotate(180deg)", zIndex:2 }}>{card.letter}</span>
-        </>}
-        {isCategory ? (
-          <div style={{ textAlign:"center", padding:"0 8px", zIndex:2 }}>
-            <div style={{ fontSize:32, marginBottom:6 }}>{CATEGORY_ICONS[card.category]}</div>
-            <div style={{ fontFamily:"'Cinzel',serif", fontWeight:700, fontSize:13, color:"#fde68a", lineHeight:1.25, letterSpacing:.5 }}>{card.category}</div>
+    <div style={{ animation: `cardIn .35s cubic-bezier(.34,1.56,.64,1) ${index * 75}ms both` }}>
+      <div style={{
+        width: 100, height: 148, borderRadius: 14,
+        background: isSwap ? "none" : bg,
+        overflow: "hidden", position: "relative",
+        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+        boxShadow: isSwap ? "none" : `0 4px 24px ${bg}44`,
+        ...(isSwap ? { border: "none" } : {}),
+      }}>
+        {isSwap ? (
+          <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", borderRadius: 14, overflow: "hidden" }}>
+            {/* Top half blue */}
+            <div style={{ flex: 1, background: "#3b82f6", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg width="36" height="24" viewBox="0 0 36 24" fill="none">
+                <path d="M4 18 L18 6 L32 18" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            {/* Divider */}
+            <div style={{ height: 2, background: "#f2f2ef" }} />
+            {/* Bottom half red */}
+            <div style={{ flex: 1, background: "#ef4444", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg width="36" height="24" viewBox="0 0 36 24" fill="none">
+                <path d="M4 6 L18 18 L32 6" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
           </div>
-        ) : isSwap ? (
-          <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:6, zIndex:2 }}>
-            {/* Arrow up (blue side → red) */}
-            <svg width="52" height="28" viewBox="0 0 52 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M4 22 L26 6 L48 22" stroke="#93c5fd" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-              <path d="M26 6 L26 26" stroke="#93c5fd" strokeWidth="4" strokeLinecap="round"/>
-            </svg>
-            {/* Divider line */}
-            <div style={{ width:60, height:2, background:"rgba(255,255,255,0.3)", borderRadius:1 }} />
-            {/* Arrow down (red side → blue) */}
-            <svg width="52" height="28" viewBox="0 0 52 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M4 6 L26 22 L48 6" stroke="#fca5a5" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-              <path d="M26 22 L26 2" stroke="#fca5a5" strokeWidth="4" strokeLinecap="round"/>
-            </svg>
-            <span style={{ fontFamily:"'Cinzel',serif", fontSize:9, letterSpacing:1, color:"rgba(255,255,255,0.7)", textTransform:"uppercase", marginTop:2 }}>Inversión</span>
+        ) : isCategory ? (
+          <div style={{ textAlign: "center", padding: "0 10px" }}>
+            <div style={{ fontSize: 28, marginBottom: 6 }}>{CATEGORY_ICONS[card.category]}</div>
+            <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 13, color: "#000", lineHeight: 1.2 }}>{card.category}</div>
           </div>
         ) : (
-          <span style={{ fontFamily:"'Cinzel',serif", fontWeight:900, fontSize:66, color:"#fff", lineHeight:1, textShadow:`0 2px 10px #0009, 0 0 28px ${glowCol}77`, zIndex:2 }}>{card.letter}</span>
+          <>
+            <span style={{ position: "absolute", top: 8, left: 10, fontFamily: "'DM Mono', monospace", fontSize: 11, color: "rgba(255,255,255,0.5)", fontWeight: 500 }}>{card.letter}</span>
+            <span style={{ fontFamily: "'DM Mono', monospace", fontWeight: 700, fontSize: 64, color: textColor, lineHeight: 1 }}>{card.letter}</span>
+            <span style={{ position: "absolute", bottom: 8, right: 10, fontFamily: "'DM Mono', monospace", fontSize: 11, color: "rgba(255,255,255,0.5)", fontWeight: 500, transform: "rotate(180deg)" }}>{card.letter}</span>
+          </>
         )}
       </div>
     </div>
   );
 }
+
+// ─── Results ──────────────────────────────────────────────────────────────────
 
 function ResultsScreen({ playerNames, scores, onPlayAgain, onMenu }) {
   const maxScore = Math.max(...scores);
@@ -334,40 +421,69 @@ function ResultsScreen({ playerNames, scores, onPlayAgain, onMenu }) {
   const isTie    = winners.length > 1;
   const sorted   = [...scores.map((s,i) => ({s,i}))].sort((a,b) => b.s-a.s);
   const medals   = ["🥇","🥈","🥉"];
+
   return (
-    <div style={{ position:"relative", zIndex:1, minHeight:"100vh", display:"flex", alignItems:"center", justifyContent:"center", padding:"20px" }}>
-      <div style={{ ...pnl, animation:"fadeUp .5s ease both" }}>
-        <div style={pnlHdr}>
-          <div style={ornS}>✦ ✦ ✦</div>
-          <h1 style={{ fontFamily:"'Cinzel',serif", fontWeight:900, fontSize:26, color:"#fff", letterSpacing:2, margin:"6px 0" }}>Fin de partida</h1>
-          <div style={ornS}>✦ ✦ ✦</div>
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
+      <div style={{ width: "100%", maxWidth: 400, animation: "slideUp .4s ease both" }}>
+
+        <div style={{ marginBottom: 32 }}>
+          <p style={{ fontSize: 12, color: "#aaa", letterSpacing: 2, textTransform: "uppercase", fontWeight: 600, marginBottom: 8 }}>Fin de partida</p>
+          <h2 style={{ fontSize: 28, fontWeight: 700, letterSpacing: -0.5, lineHeight: 1.1 }}>
+            {isTie ? "¡Empate!" : `Ganó ${playerNames[winners[0]]}`}
+          </h2>
         </div>
-        <div style={{ padding:"22px 24px 26px" }}>
-          <p style={{ textAlign:"center", fontFamily:"'Crimson Text',serif", fontSize:19, color:"#fde68a", marginBottom:20, fontStyle:"italic" }}>
-            {isTie?`¡Empate entre ${winners.map(i=>playerNames[i]).join(" y ")}!`:`¡Victoria de ${playerNames[winners[0]]}!`}
-          </p>
-          <div style={{ display:"flex", flexDirection:"column", gap:8, marginBottom:22 }}>
-            {sorted.map(({s,i}, rank) => (
-              <div key={i} style={{ display:"flex", alignItems:"center", gap:12, background:rank===0?"rgba(200,150,12,0.12)":"rgba(255,255,255,0.04)", border:`1px solid ${rank===0?"#c8960c55":"#ffffff15"}`, borderRadius:12, padding:"10px 16px", animation:`fadeUp .4s ease ${rank*70}ms both` }}>
-                <span style={{ fontSize:20, width:28, textAlign:"center" }}>{medals[rank]||`${rank+1}.`}</span>
-                <div style={{ width:13, height:13, borderRadius:"50%", background:PLAYER_COLORS[i].bg, border:`2px solid ${PLAYER_COLORS[i].border}`, flexShrink:0 }} />
-                <span style={{ flex:1, fontFamily:"'Crimson Text',serif", fontSize:17, color:"#e8d8b0" }}>{playerNames[i]}</span>
-                <span style={{ fontFamily:"'Cinzel',serif", fontWeight:700, fontSize:22, color:PLAYER_COLORS[i].border }}>{s}</span>
-                <span style={{ fontSize:12, color:"#555" }}>pts</span>
-              </div>
-            ))}
-          </div>
-          <div style={{ display:"flex", gap:10 }}>
-            <button onClick={onMenu} style={{ flex:1, padding:"12px", background:"none", border:"1px solid #c8960c66", borderRadius:12, color:"#c8960c", fontSize:14 }}>Menú</button>
-            <button onClick={onPlayAgain} style={{ flex:1, padding:"12px", background:"linear-gradient(135deg,#78500a,#c8960c,#78500a)", border:"2px solid #f0c040", borderRadius:12, color:"#1a0e00", fontSize:15, fontWeight:700 }}>Jugar de nuevo</button>
-          </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 32 }}>
+          {sorted.map(({s, i}, rank) => (
+            <div key={i} style={{
+              display: "flex", alignItems: "center", gap: 14,
+              padding: "14px 16px", borderRadius: 12,
+              background: rank === 0 ? "#fff" : "none",
+              border: `1.5px solid ${rank === 0 ? "#e5e5e5" : "transparent"}`,
+              animation: `slideUp .3s ease ${rank * 60}ms both`,
+            }}>
+              <span style={{ fontSize: 18, width: 28 }}>{medals[rank] || `${rank+1}.`}</span>
+              <div style={{ width: 9, height: 9, borderRadius: "50%", background: PC[i].bg, flexShrink: 0 }} />
+              <span style={{ flex: 1, fontSize: 15, color: rank === 0 ? "#111" : "#bbb" }}>{playerNames[i]}</span>
+              <span style={{ fontFamily: "'DM Mono', monospace", fontWeight: 700, fontSize: 22, color: rank === 0 ? "#111" : "#ccc" }}>{s}</span>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ display: "flex", gap: 10 }}>
+          <button onClick={onMenu} style={{ flex: 1, padding: "13px", background: "#e8e8e4", borderRadius: 12, color: "#999", fontSize: 14, fontWeight: 500, border: "1.5px solid #ddd" }}>
+            Menú
+          </button>
+          <button onClick={onPlayAgain} style={{ flex: 2, padding: "13px", background: "#111", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 600 }}>
+            Jugar de nuevo →
+          </button>
         </div>
       </div>
     </div>
   );
 }
 
-const pnl = { width:"100%", maxWidth:460, borderRadius:18, background:"linear-gradient(170deg,#2a1f0e,#1a1208)", border:"2px solid #c8960c", boxShadow:"0 0 0 1px #78500a, 0 24px 80px #000a, inset 0 1px 0 #f0c04020", overflow:"hidden" };
-const pnlHdr = { background:"linear-gradient(135deg,#6b3e00,#c8960c,#6b3e00)", padding:"16px 24px 12px", textAlign:"center", borderBottom:"2px solid #78500a" };
-const ornS = { color:"#fde68a", fontSize:11, letterSpacing:6, opacity:.65, marginBottom:2 };
-const lbl = { display:"block", fontFamily:"'Cinzel',serif", fontSize:11, letterSpacing:2, textTransform:"uppercase", color:"#c8960c", marginBottom:10 };
+// ─── Shared components ────────────────────────────────────────────────────────
+
+function Section({ label, children }) {
+  return (
+    <div style={{ marginBottom: 28 }}>
+      <p style={{ fontSize: 11, color: "#bbb", letterSpacing: 1.5, textTransform: "uppercase", fontWeight: 600, marginBottom: 12 }}>{label}</p>
+      {children}
+    </div>
+  );
+}
+
+function Chip({ active, onClick, children }) {
+  return (
+    <button onClick={onClick} style={{
+      width: 42, height: 42, borderRadius: 10, fontSize: 16, fontWeight: 600,
+      background: active ? "#111" : "#fff",
+      color: active ? "#fff" : "#aaa",
+      border: `1.5px solid ${active ? "#111" : "#e5e5e5"}`,
+      transition: "all .15s",
+    }}>
+      {children}
+    </button>
+  );
+}
